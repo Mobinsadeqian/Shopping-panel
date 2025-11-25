@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لیست محصولات</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        /* ... کدهای CSS قبلی شما (card-img-top و body و card) ... */
+        body {
+            background-color: #f8f9fa; 
+            font-family: Tahoma, Arial, sans-serif;
+        }
+        .card-img-top {
+            height: 250px; 
+            object-fit: cover; 
+        }
+        .card {
+            transition: transform 0.2s; 
+        }
+        .card:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .list-group-item.active {
+            z-index: 2;
+            color: #fff;
+            background-color: #0d6efd; /* رنگ آبی بوت‌استرپ */
+            border-color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark mb-5">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">فروشگاه من</span>
+            <a href="{% url 'main_page' %}" class="btn btn-outline-light btn-sm">بازگشت به خانه</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- اضافه شدن ساختار GRID دو ستونی اصلی -->
+        <!-- اصلاح چیدمان: اضافه کردن align-items-start برای همترازی عمودی و اطمینان از نمایش صحیح -->
+        <div class="row align-items-start">
+            
+            <!-- ستون ۱: سایدبار دسته‌بندی (3/12 عرض در دسکتاپ) -->
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-center mb-3">دسته‌بندی‌ها</h5>
+                        
+                        <div class="list-group">
+                            
+                            <!-- تعریف URL اصلی و عبارت جستجوی فعلی برای استفاده مجدد -->
+                            {% url 'product_list' as product_list_url %}
+                            {% with current_q=request.GET.q|default:'' %}
+
+                            <!-- لینک "همه محصولات" (فقط در صورت وجود عبارت جستجو، آن را به URL اضافه می‌کند) -->
+                            <a href="{{ product_list_url }}{% if current_q %}?q={{ current_q }}{% endif %}" 
+                               class="list-group-item list-group-item-action {% if not selected_category_id %}active{% endif %}">
+                                همه محصولات
+                            </a>
+
+                            <!-- حلقه برای نمایش دسته‌بندی‌ها -->
+                            {% for category in categories %}
+                            <a href="{{ product_list_url }}?cat={{ category.id }}{% if current_q %}&q={{ current_q }}{% endif %}" 
+                               class="list-group-item list-group-item-action {% if category.id == selected_category_id %}active{% endif %}">
+                                {{ category.name }}
+                            </a>
+                            {% endfor %}
+
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ستون ۲: محتوای محصولات و جستجو (9/12 عرض در دسکتاپ) -->
+            <div class="col-lg-9 col-md-8">
+                <h2 class="mb-4 text-center">جدیدترین محصولات</h2>
+
+                <!-- فرم جستجو (تغییر: فیلد پنهان فقط در صورت انتخاب دسته‌بندی وجود دارد) -->
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-8">
+                        <form method="GET" action="{% url 'product_list' %}">
+                            <div class="input-group">
+                                
+                                {% if selected_category_id %}
+                                    <input type="hidden" name="cat" value="{{ selected_category_id }}"> <!-- حفظ دسته‌بندی در حین جستجو -->
+                                {% endif %}
+
+                                <input type="text" 
+                                       name="q" 
+                                       class="form-control" 
+                                       placeholder="جستجو بر اساس نام محصول یا مدل..."
+                                       value="{{ request.GET.q|default:'' }}">
+                                <button class="btn btn-primary" type="submit">جستجو</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- پیام در صورت عدم وجود محصول -->
+                {% if not products %}
+                    <div class="alert alert-warning text-center" role="alert">
+                        متأسفانه محصولی با این مشخصات یا دسته‌بندی یافت نشد.
+                    </div>
+                {% endif %}
+
+
+                <!-- شروع گرید محصولات (کد قبلی) -->
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                    {% for product in products %}
+                    <div class="col">
+                        <!-- ... محتوای کارت محصول (بدون تغییر) ... -->
+                        <div class="card h-100 shadow-sm border-0">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                            {% else %}
+                                <div class="d-flex align-items-center justify-content-center bg-secondary text-white" style="height: 250px;">
+                                    <span>بدون تصویر</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold text-primary">{{ product.name }}</h5>
+                                {% if product.category %}
+                                <p class="card-text text-info small">دسته‌بندی: {{ product.category.name }}</p>
+                                {% endif %}
+                                {% if product.model %}
+                                <p class="card-text text-muted small">مدل: {{ product.model }}</p>
+                                {% endif %}
+                                {% if product.price %}
+                                <h6 class="card-text text-success mb-3">{{ product.price }} تومان</h6>
+                                {% else %}
+                                <h6 class="card-text text-danger mb-3">تماس بگیرید</h6>
+                                {% endif %}
+                                <div class="mt-auto">
+                                    <a href="{% url 'product_detail' id=product.id %}" class="btn btn-primary w-100">مشاهده جزئیات</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- فوتر جدید و شیک را اینجا قرار دهید: -->
+    <footer class="footer mt-auto py-4 bg-light border-top">
+        <div class="container text-center">
+            <p class="text-secondary mb-0 small">
+                <span class="me-2">⚡</span>
+                طراحی و توسعه با افتخار توسط 
+                <a href="#" target="_blank" class="text-dark text-decoration-none fw-bold me-2">
+                    مبین
+                </a>
+                <span class="ms-3 text-muted">
+                    تمام حقوق محفوظ است &copy; {% now "Y" %}
+                </span>
+            </p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
