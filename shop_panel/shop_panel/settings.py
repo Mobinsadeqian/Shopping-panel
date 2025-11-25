@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e2+f3cb+nyo09+ivs(d=@g$%p&1mpc@zu*xfan@kc^iki8bi5f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mobinsa.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
