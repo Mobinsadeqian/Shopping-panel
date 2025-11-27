@@ -13,7 +13,7 @@ def signup(request):
             login(request, user)
             return redirect('main_page')
     else:
-            form = UserCreationForm()
+        form = UserCreationForm()
     return render(request, 'panel/signup.html', {'form':form})        
 
 def main_page(request):
