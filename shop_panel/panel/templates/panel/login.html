@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ورود به سایت</title>
+    <!-- لود کردن بوت‌استرپ RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        /* استایل‌های سفارشی برای وسط‌چین کردن و زیبایی */
+        body { 
+            background-color: #f0f2f5; 
+            font-family: Tahoma, Arial; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+        }
+        .login-card { 
+            width: 100%; 
+            max-width: 400px; 
+            padding: 2rem; 
+            border-radius: 10px; 
+            border: none; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        }
+        .form-control { 
+            margin-bottom: 1rem; 
+        }
+    </style>
+</head>
+<body>
+    <div class="card login-card">
+        <h3 class="text-center mb-4 fw-bold">ورود به حساب کاربری</h3>
+        
+        <!-- فرم ورود به سایت -->
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- نمایش ارورهای ورود (مثل نام کاربری/رمز عبور اشتباه) -->
+            {% if form.errors %}
+                <div class="alert alert-danger small">نام کاربری یا رمز عبور اشتباه است.</div>
+            {% endif %}
+
+            <!-- فیلدها -->
+            <div class="mb-3">
+                <label class="form-label">نام کاربری</label>
+                <!-- نام فیلد باید "username" باشد تا LoginView جنگو آن را تشخیص دهد -->
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">رمز عبور</label>
+                <!-- نام فیلد باید "password" باشد -->
+                <input type="password" name="password" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2">ورود</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <span class="text-muted small">حساب کاربری ندارید؟</span>
+            <a href="{% url 'signup' %}" class="text-decoration-none fw-bold">ثبت‌نام کنید</a>
+        </div>
+        <div class="text-center mt-2">
+            <a href="{% url 'main_page' %}" class="text-secondary small text-decoration-none">بازگشت به خانه</a>
+        </div>
+    </div>
+</body>
+</html>

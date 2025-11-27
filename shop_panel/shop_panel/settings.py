@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e2+f3cb+nyo09+ivs(d=@g$%p&1mpc@zu*xfan@kc^iki8bi5f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mobinsa.pythonanywhere.com', '127.0.0.1']
+ALLOWED_HOSTS = ['mobinsa.pythonanywhere.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -124,3 +124,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LOGIN_REDIRECT_URL = 'main_page'
+LOGOUT_REDIRECT_URL = 'main_page'
